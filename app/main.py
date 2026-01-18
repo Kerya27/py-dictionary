@@ -1,7 +1,4 @@
-from itertools import count
 from typing import Any
-
-from app.point import Point
 
 
 class Dictionary:
@@ -10,7 +7,7 @@ class Dictionary:
         self.capacity = 8
         self.hash_table: list = [[] for _ in range(self.capacity)]
 
-    def __len__(self):
+    def __len__(self) -> int:
         return self.length
 
     def hash_func(self, key: Any) -> int:
@@ -24,7 +21,6 @@ class Dictionary:
         for bucket in old_table:
             for key, value in bucket:
                 self[key] = value
-
 
     def __setitem__(self, key: Any, value: Any) -> None:
         if self.length > self.capacity * 0.7:
@@ -100,5 +96,3 @@ class Dictionary:
             for item in self.hash_table[index]:
                 key, _ = item
                 yield key
-
-
