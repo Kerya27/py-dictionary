@@ -19,7 +19,7 @@ class Dictionary:
         self.hash_table = [[] for _ in range(self.capacity)]
         self.length = 0
         for bucket in old_table:
-            for key, value in bucket:
+            for key, _, value in bucket:
                 self[key] = value
 
     def __setitem__(self, key: Any, value: Any) -> None:
@@ -29,10 +29,10 @@ class Dictionary:
         has_collision = False
         collision_index = 0
         node = self.hash_table[index]
-        item_to_add = (key, value)
+        item_to_add = (key, hash(key), value)
 
         for node_index, item in enumerate(node):
-            key_item, _ = item
+            key_item, _, _ = item
             if key_item == key:
                 has_collision = True
                 collision_index = node_index
@@ -47,18 +47,15 @@ class Dictionary:
     def __getitem__(self, item_key: Any) -> Any:
         index = self.hash_func(item_key)
         for item in self.hash_table[index]:
-            key, value = item
+            key, _, value = item
             if key == item_key:
                 return value
-        raise KeyError
+        raise KeyError(f'Key not found: {item_key}')
 
     def __delitem__(self, key: Any) -> None:
         index = self.hash_func(key)
-        node = self.hash_table[index]
         pop_value = self.__getitem__(key)
-        item_to_delete = (key, pop_value)
-        if item_to_delete not in node:
-            raise KeyError
+        item_to_delete = (key, hash(key), pop_value)
 
         self.hash_table[index].remove(item_to_delete)
         self.length -= 1
@@ -94,5 +91,5 @@ class Dictionary:
     def __iter__(self) -> Any:
         for index in range(self.capacity):
             for item in self.hash_table[index]:
-                key, _ = item
+                key, _, _ = item
                 yield key
